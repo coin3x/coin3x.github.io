@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="zh-Hant-TW">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title></title>
+    <script src="react.production.min.js"></script>
+    <script src="react-dom.production.min.js"></script>
+    <script src="babel.min.js"></script>
+    <style>
+      html,
+      body {
+        padding: 0;
+        margin: 0;
+        font-family: system-ui, sans-serif;
+      }
+
+      body {
+        background: #f1f2f4;
+        color: #333;
+      }
+
+      #root {
+        max-width: 600px;
+        margin: 1em auto;
+      }
+
+      .titles {
+        border-radius: 4px;
+        overflow: hidden;
+      }
+
+      .title {
+        background: #fff;
+        padding: 16px;
+      }
+
+      .title .first-row {
+        display: flex;
+      }
+
+      .title .votes {
+        font-weight: bold;
+        min-width: 48px;
+      }
+
+      .title .name {
+        font-size: 1.1em;
+      }
+
+      .title .alt {
+        font-size: 0.9em;
+      }
+
+      .title .tag {
+        background: #4691e0;
+        border-radius: 4px;
+        padding: 2px 4px;
+        color: white;
+        font-size: 0.7em;
+        margin-right: 4px;
+      }
+
+      .comment {
+        background: #e8eaee;
+        border-radius: 16px;
+        padding: 8px 16px;
+        margin: 4px 0;
+        font-size: .9em;
+        display: inline-block;
+      }
+
+      h4 {
+        padding-left: 1em
+      }
+    </style>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="text/babel">
+      const { useEffect, useState } = React;
+
+      function formatTag(tag) {
+        if (tag === 'movie') return '電影';
+        if (tag === 'manga') return '漫畫';
+        return tag;
+      }
+
+      function Title({ title }) {
+        return (
+          <div className="title">
+            <div class="first-row">
+              <div className="votes">{title.votes}</div>
+              <div>
+                <div className="name">
+                  {title.display ?? title.name}{' '}
+                  {title.tags.map((tag) => (
+                    <span className="tag" key={tag}>
+                      {formatTag(tag)}
+                    </span>
+                  ))}
+                </div>
+                {!!title.display && <div className="alt">{title.name}</div>}
+
+                <div style={{ 'margin-bottom': '8px' }}>
+                  {title.link && (
+                    <a href={title.link} target="_blank" className="tag">
+                      維基百科
+                    </a>
+                  )}
+                </div>
+                {title.comments.map((comment) => (
+                  <React.Fragment key={comment}>
+                  <div className="comment" key={comment}>
+                    {comment}
+                  </div>
+                  <br />
+                  </React.Fragment>
+                ))}
+              </div>
+            </div>
+          </div>
+        );
+      }
+
+      function App() {
+        let [titles, setTitles] = useState(null);
+        let [error, setError] = useState('');
+        useEffect(() => {
+          async function run() {
+            try {
+              let res = await fetch('titles.json');
+              let json = await res.json();
+              json.sort((a, b) => {
+                if (a.votes === b.votes) {
+                  if (a.comments.length === b.comments.length) {
+                    return a.name.localeCompare(b.name);
+                  }
+                  return b.comments.length - a.comments.length;
+                }
+                return b.votes - a.votes;
+              });
+              setTitles(json);
+            } catch (e) {
+              setError(`無法載入: ${e}`);
+            }
+          }
+          run();
+        }, []);
+
+        return (
+          <div>
+            <h4>到底都推薦了什麼</h4>
+            {!titles && !error && '載入中'}
+            {!!error && error}
+            <div className="titles">{!!titles && titles.map((title) => <Title key={title.name} title={title} />)}</div>
+          </div>
+        );
+      }
+    </script>
+    <script type="text/babel">
+      ReactDOM.render(<App />, document.getElementById('root'));
+    </script>
+  </body>
+</html>

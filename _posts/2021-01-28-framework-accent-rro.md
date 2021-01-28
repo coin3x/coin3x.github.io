@@ -11,7 +11,7 @@ tags: android rro
 
 ## TL;DR
 
-The package that contains the app chooser activity, `android`, somehow didn't loaded the accent RRO.
+The package that contains the app chooser activity, `android`, somehow didn't load the accent RRO.
 
 What I did in the end is convert an accent RRO to static overlay so my eyes won't burn every time I need to choose an app.
 

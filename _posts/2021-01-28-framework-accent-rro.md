@@ -102,7 +102,7 @@ int color = res.getColor(res.getIdentifier("accent_device_default_light", "color
 String.format("#%06X", (0xFFFFFF & color));
 ```
 ```
--> #167C80
+-> #167C80 // the default teal color in AOSP
 ```
 Wait, the overlay isn't applied?
 ```java

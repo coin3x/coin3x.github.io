@@ -59,7 +59,7 @@ But why is there no null checks? Should `mIcon` even be null? After more reads o
 <figcaption>looks sus, <a href="https://cs.android.com/android/platform/superproject/+/master:frameworks/base/services/core/java/com/android/server/notification/NotificationHistoryProtoHelper.java;l=220;drc=master">source</a></figcaption>
 </figure>
 
-There are many sources for an icon. It could be from the resource of a package, or from a bitmap. By reading the code you may notice the reading and writing logic for an icon of the bitmap type is not implemented yet. After persisting such notification and reading it back, `mIcon` would become null.
+There are many sources for an icon. It could be from the resource of a package, or from a bitmap. By reading the code you may notice the reading and writing logic for an icon of the bitmap type is not implemented yet. After persisting a notification with such icon and reading it back, `mIcon` would become null.
 
 ### Conclusion?
 This problem still exists in Android 12. Someone, please, add a null check or something.

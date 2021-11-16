@@ -45,7 +45,7 @@ Notifications in Android are managed by `NotificationManagerService`. By calling
 
 The point is Binder only allows transmitting primitive data types like integers and strings. To send an object, you would need to serialize it into a Parcel. And this is how the notification history will be sent.
 
-Notification history is stored in `HistoricalNotification` objects, which contain an `Icon` type field called `mIcon` that stores the icon of the particular notification.
+Notification history is stored in `HistoricalNotification` objects, which contain an `Icon` type field called `mIcon` that stores the icon of that particular notification.
 
 ### The billion dollar mistake
 By reading the error log you can find that the system tried to access a null field when writing an `Icon` object into a Parcel, and this is why the call failed. Looking into [related code paths](https://cs.android.com/android/platform/superproject/+/53022318db4a69095cdcc6d4b83bc26ecb12e835:frameworks/base/core/java/android/app/NotificationHistory.java;l=500) it seems like `mIcon` is what the system tried to access.

@@ -48,7 +48,7 @@ The point is Binder only allows transmitting primitive data types like integers 
 Notification history is stored in `HistoricalNotification` objects, which contain an `Icon` type field called `mIcon` that stores the icon of that particular notification.
 
 ### The billion dollar mistake
-By reading the error log you can find that the system tried to access a null field when writing an `Icon` object into a Parcel, and this is why the call failed. Looking into [related code paths](https://cs.android.com/android/platform/superproject/+/53022318db4a69095cdcc6d4b83bc26ecb12e835:frameworks/base/core/java/android/app/NotificationHistory.java;l=500) it seems like `mIcon` is what the system tried to access.
+By reading the error log you can find that the system tried to access a null field when writing an `Icon` object into a Parcel, and this is why the call failed. Looking into [related code paths](https://cs.android.com/android/platform/superproject/+/53022318db4a69095cdcc6d4b83bc26ecb12e835:frameworks/base/core/java/android/app/NotificationHistory.java;l=500), it seems like `mIcon` is what the system tried to access.
 
 But why is there no null checks? Should `mIcon` even be null? After more reads of source code, it seems that a `HistoricalNotification` object would only be constructed by `NotificationManagerService#maybeRecordInterruption` and the deserialization logic of `HistoricalNotification`.
 

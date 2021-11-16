@@ -41,7 +41,7 @@ W/NotificationBackend:   at android.os.Binder.execTransact
 ### NoMan what?
 Let’s start with how the Settings app reads the notification history.
 
-Notifications in Android are managed by `NotificationManagerService`. By calling its `getNotificationHistory` method you can access the history. And because `NotificationManagerService` and the Settings app are different process, they communicate with each other through the Binder mechanism.
+Notifications in Android are managed by `NotificationManagerService`. By calling its `getNotificationHistory` method you can access the history. And because `NotificationManagerService` and the Settings app are different processes, they communicate with each other through the Binder mechanism.
 
 The point is Binder only allows transmitting primitive data types like integers and strings. To send an object, you would need to serialize it into a Parcel. And this is how the notification history will be sent.
 

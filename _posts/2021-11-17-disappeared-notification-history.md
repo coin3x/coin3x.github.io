@@ -50,9 +50,9 @@ Android 的通知紀錄用 `HistoricalNotification` 這個 class 儲存，其中
 ### 「價值十億美元的失誤」
 看一下錯誤訊息會發現，系統在嘗試將一個 `Icon` 型態的值寫入 Parcel 時存取到了一個空的欄位，導致紀錄無法傳回設定 app。利用 Android 開源的好處，觀察一下[相關的原始碼](https://cs.android.com/android/platform/superproject/+/53022318db4a69095cdcc6d4b83bc26ecb12e835:frameworks/base/core/java/android/app/NotificationHistory.java;l=500)後會發現那個欄位就是 `mIcon`。
 
-但 `mIcon` 應該是空的嗎？為什麼寫入時沒做檢查？再看一下會建立 `HistoricalNotification` 的相關原始碼，只有 `NotificationManagerService#maybeRecordInterruption` 跟從通知紀錄檔 deserialize 回 `HistoricalNotification` 的邏輯。
+但 `mIcon` 應該是空的嗎？為什麼寫入時沒做檢查？再看一下會建立 `HistoricalNotification` 的相關原始碼，只有 `NotificationManagerService#maybeRecordInterruptionLocked` 跟從通知紀錄檔 deserialize 回 `HistoricalNotification` 的邏輯。
 
-`maybeRecordInterruption` 就是系統儲存 app 通知的主要邏輯，在儲存時會特別檢查 icon 是不是空的。所以是 deserialize 的過程出了問題嗎？
+`maybeRecordInterruptionLocked` 就是系統儲存 app 通知的主要邏輯，在儲存時會特別檢查 icon 是不是空的。所以是 deserialize 的過程出了問題嗎？
 
 <figure>
 <img alt="Android Code Search, showing the readIcon method of the class NotificationHistoryProtoHelper, where the code path for Bitmap icon was left todo." src="{{ site.baseUrl }}/assets/disappeared-notification-history/proto-helper.png">

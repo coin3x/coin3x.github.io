@@ -4,6 +4,8 @@ date: 2021-11-17 00:00:00 +0800
 title: "消失的通知紀錄"
 tags: android notification
 ---
+This article is also available in: [English](./disappeared-notification-history-en.html)
+
 Android 11 在設定裡新增了通知紀錄的選項，你可以看到最近剛滑掉的通知，還有二十四小時內的通知紀錄，以往都要靠新增桌面小工具的方式才能叫出通知紀錄的頁面。
 
 <figure>
@@ -46,7 +48,7 @@ Binder 機制如何運作不是本文重點，要知道的只有在透過 Binder
 Android 的通知紀錄用 `HistoricalNotification` 這個 class 儲存，其中有一個 `Icon` 型態的 `mIcon` 欄位負責儲存通知的圖示。
 
 ### 「價值十億美元的失誤」
-看一下錯誤訊息會發現，系統在嘗試將一個 Icon 型態的值寫入 Parcel 時存取到了一個空的欄位，導致紀錄無法傳回設定 app。利用 Android 開源的好處，觀察一下相關的原始碼後會發現那個欄位就是 `mIcon`。
+看一下錯誤訊息會發現，系統在嘗試將一個 `Icon` 型態的值寫入 Parcel 時存取到了一個空的欄位，導致紀錄無法傳回設定 app。利用 Android 開源的好處，觀察一下[相關的原始碼](https://cs.android.com/android/platform/superproject/+/53022318db4a69095cdcc6d4b83bc26ecb12e835:frameworks/base/core/java/android/app/NotificationHistory.java;l=500)後會發現那個欄位就是 `mIcon`。
 
 但 `mIcon` 應該是空的嗎？為什麼寫入時沒做檢查？再看一下會建立 `HistoricalNotification` 的相關原始碼，只有 `NotificationManagerService#maybeRecordInterruption` 跟從通知紀錄檔 deserialize 回 `HistoricalNotification` 的邏輯。
 
@@ -57,7 +59,7 @@ Android 的通知紀錄用 `HistoricalNotification` 這個 class 儲存，其中
 <figcaption>looks sus, <a href="https://cs.android.com/android/platform/superproject/+/master:frameworks/base/services/core/java/com/android/server/notification/NotificationHistoryProtoHelper.java;l=220;drc=master">source</a></figcaption>
 </figure>
 
-通知的 icon 可以有很多類型，可以是 app 內的 resource，或是 bitmap。觀察讀取和寫入 icon 的原始碼會發現，要是原本通知 icon 是 bitmap 類型的話，因為還沒實作儲存 bitmap 的邏輯，在經過一次寫入讀取的循環後，mIcon 就會變成空值。
+通知的 icon 可以有很多類型，可以是 app 內的 resource，或是 bitmap。觀察讀取和寫入 icon 的原始碼會發現，要是原本通知 icon 是 bitmap 類型的話，因為還沒實作儲存 bitmap 的邏輯，在經過一次寫入讀取的循環後，`mIcon` 就會變成空值。
 
 ### 結論
 Google 拜託快點修好，這個問題已經從 11 拖到 12 了吧，儲存 bitmap 麻煩就算了，不能先檢查一下空值嗎

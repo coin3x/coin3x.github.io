@@ -150,7 +150,7 @@
 
         return (
           <div>
-            <h4>到底都推薦了什麼</h4>
+            <h4>到底都推薦了什麼<br /> <br />Updated: 3/22 06:41</h4>
             {!titles && !error && '載入中'}
             {!!error && error}
             <div className="titles">{!!titles && titles.map((title) => <Title key={title.name} title={title} />)}</div>
